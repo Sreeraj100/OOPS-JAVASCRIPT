@@ -26,6 +26,8 @@ class Person {
   get secret() { return this.#ssn; } // getter (access controlled)
 }
 
+
+
 Object — the runtime entity
 
 An object is a collection of keyed values (properties), where values can be primitives, functions, or other objects. Each object has an internal link to another object called its prototype ([[Prototype]]), which is the mechanism JS uses for delegation: when you access a property, JS looks on the object first, then follows the prototype chain until it finds a match or reaches null. Objects are first-class — you can create them with object literals {}, Object.create(proto), constructor functions (via new), or class instances. Objects carry property attributes (writable, enumerable, configurable) and can have accessor properties (getters/setters) that look like fields but execute functions. Because functions are objects too, methods are just properties that happen to be callable. Key operations include Object.keys, Object.getOwnPropertyNames, Object.getPrototypeOf, Object.assign, and Object.freeze. Understand that methods created on the prototype are shared and more memory-efficient; per-instance function properties are unique to a single object and useful when you need closure-captured state or private behavior per instance.
@@ -42,6 +44,7 @@ Constructor functions & prototypes — the pre-class model
 
 Before class syntax, JS used constructor functions and prototypes. A constructor function is any function invoked with new: function Person(name) { this.name = name; }. When called with new, JS creates a fresh object whose prototype is Person.prototype, calls the function with this set to the new object, and (if the constructor doesn’t explicitly return an object) returns that object. Methods shared by all instances should be attached to Person.prototype, e.g. Person.prototype.greet = function(){...} — this ensures a single method object is reused. The prototype chain forms the object’s inheritance path. This model is still important to understand because class is just nicer syntax on top of it; many libraries and patterns use prototypes directly.
 
+
 Constructor example:
 
 function Animal(type) {
@@ -51,8 +54,6 @@ Animal.prototype.speak = function() {
   return `A ${this.type} makes a sound.`;
 };
 const a = new Animal('dog');
-
-
 
 
 
@@ -72,7 +73,6 @@ class Dog extends Animal {
 
 
 
-
 Polymorphism — same message, different sounds
 
 Polymorphism means code that works with objects of multiple types through a common interface. In JS, polymorphism is achieved by method overriding (subclasses implement the same method) and duck typing (if it walks like a duck and quacks like a duck, it's treated as a duck). For example, a function can call obj.draw() without caring whether obj is Circle, Square, or any other object that implements draw. This dynamic dispatch is automatic: the actual method invoked depends on the concrete object's prototype at runtime. Polymorphism encourages designing simple, consistent APIs rather than tightly coupling code to specific implementations.
@@ -89,13 +89,9 @@ function render(shape) { console.log(shape.draw()); }
 Encapsulation — hiding implementation and controlling access
 
 Encapsulation is about keeping internal state and implementation details hidden and exposing a clean API. JavaScript offers several options:
-
 Private fields (#name): modern, lexical privacy enforced by the language. Accessible only inside the class body.
-
 Closures / module pattern: put private data in a function scope (e.g., factory function or WeakMap) so only privileged methods can access it.
-
 Symbol or WeakMap: using symbols or WeakMap keyed by instance to hold hidden data.
-
 Conventions: leading underscore _private is only a convention and not enforced.
 
 Encapsulation prevents external code from relying on internal details you might change later and provides invariants (e.g., validation in setters). Use getters/setters to control access and enforce constraints, and prefer private fields for true privacy when available.
@@ -107,8 +103,6 @@ class Counter {
   increment() { this.#count++; }
   get value() { return this.#count; }
 }
-
-
 
 
 
@@ -130,8 +124,6 @@ class Person {
 
 
 
-
-
 Static members and factory/static initialization
 
 Static methods and properties (declared with static) belong to the class/constructor, not to instances. They are great for utility functions, factory methods, or cached data shared across instances. ES2022 added static initialization blocks for complex static setup. Use static members for behavior that isn’t tied to a specific instance.
@@ -142,8 +134,6 @@ class DB {
   static pool = createPool();
   static query(sql) { return DB.pool.query(sql); }
 }
-
-
 
 
 
@@ -207,30 +197,25 @@ Serialization and JSON
 
 When you JSON.stringify an object, functions (methods) and symbol keys are dropped; only enumerable string-keyed data properties are serialized. If you need to serialize behavior, provide a toJSON() method to control the output. When designing classes, separate data (serializable) from behavior (reconstructed on deserialization) or provide factory methods that accept plain data and return full instances.
 
+
 Design patterns commonly used with JS OOP
 
 Module/Factory: closures for private state and factory functions returning objects.
-
 Singleton: one shared instance (use a module that exports a single object).
-
 Observer/Publisher-Subscriber: objects subscribe to events and are notified — common in UI code.
-
 Factory Method/Abstract Factory: creating objects via factory functions rather than new scattered across code.
-
 Decorator: dynamically add behavior to an object by wrapping it or using higher-order functions.
 Patterns are tools — pick one when it solves a specific problem and helps readability and testability.
+
 
 SOLID principles applied to JS
 
 Single Responsibility: classes/modules should have one reason to change.
-
 Open/Closed: design so behavior can be extended without modifying existing code (use composition, polymorphism).
-
 Liskov Substitution: derived objects should be usable where base objects are expected.
-
 Interface Segregation: prefer many small interfaces/APIs over one large monolith.
-
 Dependency Inversion: high-level modules should depend on abstractions (functions, small interfaces) rather than concrete classes. In JS this often maps to passing dependencies as parameters or using factory injection.
+
 
 Practical examples — small but complete
 
@@ -249,6 +234,7 @@ class Animal {
 class Dog extends Animal {
   speak() { return `${this.name} barks.`; } // polymorphic override
 }
+
 
 
 Prototype-style inheritance example:
